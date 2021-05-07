@@ -1,4 +1,4 @@
-'use strict';
+
 
 const fs = require('fs');
 const path = require('path');
@@ -110,7 +110,14 @@ module.exports = function (webpackEnv) {
       },
       {
         loader: require.resolve('css-loader'),
-        options: cssOptions,
+        options: {
+           modules: {
+             mode: "local",
+             localIdentName: "[name][local][hash:base64:5]"
+           },
+           import: true,
+           importLoaders: true
+         }     
       },
       {
         // Options for PostCSS as we reference these options twice
@@ -550,7 +557,7 @@ module.exports = function (webpackEnv) {
                 name: 'static/media/[name].[hash:8].[ext]',
               },
             },
-            // ** STOP ** Are you adding a new loader?
+            // * STOP * Are you adding a new loader?
             // Make sure to add the new loader(s) before the "file" loader.
           ],
         },
@@ -701,12 +708,12 @@ module.exports = function (webpackEnv) {
             // as micromatch doesn't match
             // '../cra-template-typescript/template/src/App.tsx'
             // otherwise.
-            '../**/src/**/*.{ts,tsx}',
-            '**/src/**/*.{ts,tsx}',
-            '!**/src/**/__tests__/**',
-            '!**/src/**/?(*.)(spec|test).*',
-            '!**/src/setupProxy.*',
-            '!**/src/setupTests.*',
+            '../*/src//.{ts,tsx}',
+            '*/src//.{ts,tsx}',
+            '!*/src//_tests_/*',
+            '!*/src//?(.)(spec|test).*',
+            '!*/src/setupProxy.',
+            '!*/src/setupTests.',
           ],
           silent: true,
           // The formatter is invoked directly in WebpackDevServerUtils during development
@@ -718,7 +725,7 @@ module.exports = function (webpackEnv) {
           extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
           formatter: require.resolve('react-dev-utils/eslintFormatter'),
           eslintPath: require.resolve('eslint'),
-          failOnError: !(isEnvDevelopment && emitErrorsAsWarnings),
+          emitWarning: isEnvDevelopment && emitErrorsAsWarnings,
           context: paths.appSrc,
           cache: true,
           cacheLocation: path.resolve(
